@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { EventData } from "tns-core-modules/data/observable";
 import { Switch } from "tns-core-modules/ui/switch";
-import { HomeService } from "../shared/home.service";
+import { GpioService } from "../shared/gpio.service";
 import { RouterExtensions } from "nativescript-angular";
 
 @Component({
@@ -12,7 +12,7 @@ import { RouterExtensions } from "nativescript-angular";
 })
 export class HomeComponent implements OnInit {
 
-    constructor(private routerExtensions: RouterExtensions, private homeService: HomeService) { }
+    constructor(private routerExtensions: RouterExtensions, private palabraService: GpioService) { }
 
     ngOnInit(): void {
 
@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
         }
 
     }
-  
+
     onCheckedChangeDanilo(args: EventData) {
         let sw = args.object as Switch;
         let isChecked = sw.checked; // boolean
@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit {
     cambiarEstado(color: string, accion: number) {
 
         //Subscribir promesa
-        this.homeService.cambiarEstado(
+        this.palabraService.cambiarEstado(
             {
                 state: accion
             }, color

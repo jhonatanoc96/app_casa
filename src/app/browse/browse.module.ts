@@ -4,6 +4,9 @@ import { NativeScriptCommonModule } from "nativescript-angular/common";
 import { BrowseRoutingModule } from "./browse-routing.module";
 import { BrowseComponent } from "./browse.component";
 
+import { SpeechRecognition } from "nativescript-speech-recognition";
+
+
 @NgModule({
     imports: [
         NativeScriptCommonModule,
@@ -14,6 +17,10 @@ import { BrowseComponent } from "./browse.component";
     ],
     schemas: [
         NO_ERRORS_SCHEMA
+    ],
+    providers: [
+        SpeechRecognition
     ]
+
 })
 export class BrowseModule { }
