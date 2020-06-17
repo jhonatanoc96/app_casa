@@ -2,16 +2,28 @@
     <Label text="Search"></Label>
 </ActionBar> -->
 
-<PullToRefresh (refresh)="refreshList($event)">
-
-        <ListView [items]="listaPalabras">
+<GridLayout *ngIf="!isVisible">
+    <PullToRefresh (refresh)="refreshList($event)">
+        <ListView [items]="listaPines">
             <ng-template let-item="item">
-                <StackLayout>
-                    <Label text="{{'Palabra: ' + item.palabra}}"></Label>
-                    <Label text="{{'Estado: ' + item.estado}}"></Label>
-                    <!-- <Label *ngIf="item.estado" text="{{'Estado: ' + item.estado}}"></Label> -->
+                <StackLayout (tap)="alertAction(item._id)">
+                    <Label text="{{'Descripción: ' + item.descripcion}}"></Label>
+                    <Label *ngIf="item.palabraUno" text="{{'Palabra 1: ' + item.palabraUno.palabra}}"></Label>
+                    <Label *ngIf="item.palabraDos" text="{{'Palabra 2: ' + item.palabraDos.palabra}}"></Label>
+                    <Label *ngIf="item.palabraTres" text="{{'Palabra 3: ' + item.palabraTres.palabra}}"></Label>
                 </StackLayout>
             </ng-template>
         </ListView>
+    </PullToRefresh>
 
-</PullToRefresh>
+</GridLayout>
+
+<GridLayout *ngIf="isVisible">
+    <StackLayout>
+        <Label text="Descripción: {{pinSelected.pin.descripcion}}" textWrap="true"></Label>
+        <ListPicker [items]="listaPalabras" textField="palabra" selectedIndex="0"
+            (selectedIndexChange)="onSelectedIndexChanged($event)" class="picker"></ListPicker>
+        <Button text="OK"></Button>
+        <Button text="Cancelar" (tap)="cancelarEditarPalabra()"></Button>
+    </StackLayout>
+</GridLayout>

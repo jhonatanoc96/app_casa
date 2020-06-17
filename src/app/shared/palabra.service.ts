@@ -9,7 +9,7 @@ export class PalabraService {
 
     constructor(private http: HttpClient) { }
 
-    // Función para encender o apagar el bombillo
+    // Función para consultar las palabras creadas.
     consultarPalabras() {
         let headers = new HttpHeaders({
             "Content-Type": "application/json"

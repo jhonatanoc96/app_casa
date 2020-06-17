@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http"
 })
 export class GpioService {
     private serverUrl = "https://unentered-caterpillar-1315.dataplicity.io/";
+    private herokuUrl = "https://brotherapi.herokuapp.com/";
 
     constructor(private http: HttpClient) { }
 
@@ -17,6 +18,44 @@ export class GpioService {
 
         return this.http.post(
             this.serverUrl + "pin/" + pin + "/", data, { headers: headers });
+    }
+
+    // Función para consultar los pines creados
+    consultarPines() {
+        let headers = new HttpHeaders({
+            "Content-Type": "application/json"
+        });
+
+        return this.http.get(
+            this.herokuUrl + "api/pin", { headers: headers });
+    }
+
+    // Función para consultar los pines creados
+    consultarPinById(id: string) {
+        let headers = new HttpHeaders({
+            "Content-Type": "application/json"
+        });
+
+        return this.http.get(
+            this.herokuUrl + "api/pin/" + id, { headers: headers });
+    }
+
+    agregarPin(data: any) {
+        let headers = new HttpHeaders(
+            {
+                "Content-Type": "application/json"
+            });
+
+        return this.http.post(this.herokuUrl + "api/pin", data, { headers: headers });
+    }
+
+    editarPin(data: any, id: string) {
+        let headers = new HttpHeaders(
+            {
+                "Content-Type": "application/json"
+            });
+
+        return this.http.put(this.herokuUrl + "api/pin/" + id, data, { headers: headers });
     }
 
 }
