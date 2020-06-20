@@ -19,6 +19,15 @@ export class PalabraService {
             this.herokuUrl + "api/palabras", { headers: headers });
     }
 
+    consultarPalabraById(id: string) {
+        let headers = new HttpHeaders({
+            "Content-Type": "application/json"
+        });
+
+        return this.http.get(
+            this.herokuUrl + "api/palabras/" + id, { headers: headers });
+    }
+
     agregarPalabra(data: any) {
         let headers = new HttpHeaders(
             {
@@ -28,6 +37,23 @@ export class PalabraService {
         return this.http.post(this.herokuUrl + "api/palabras", data, { headers: headers });
     }
 
+    editarPalabra(data: any, id: string) {
+        let headers = new HttpHeaders(
+            {
+                "Content-Type": "application/json"
+            });
+
+        return this.http.put(this.herokuUrl + "api/palabras/" + id, data, { headers: headers });
+    }
+
+    eliminarPalabra(id: string) {
+        let headers = new HttpHeaders(
+            {
+                "Content-Type": "application/json"
+            });
+
+        return this.http.delete(this.herokuUrl + "api/palabras/" + id, { headers: headers });
+    }
 
 
 

@@ -9,9 +9,9 @@ import { alert, prompt, action } from "tns-core-modules/ui/dialogs"
 import * as dialogs from "tns-core-modules/ui/dialogs";
 import { registerElement } from "nativescript-angular/element-registry";
 import { EventData } from "tns-core-modules/data/observable";
-
 import { ListPicker } from "tns-core-modules/ui/list-picker";
 
+registerElement('Fab', () => require('nativescript-floatingactionbutton').Fab);
 registerElement("PullToRefresh", () => require("@nstudio/nativescript-pulltorefresh").PullToRefresh);
 
 @Component({
@@ -24,10 +24,19 @@ export class SearchComponent implements OnInit {
     listaPalabras: Array<Palabra>
     listaPines: Array<Pin>
     //Dropdown
-    public selectedIndex = 1;
-    //Listpicker && Listview
+    selectedIndex = 1;
+    //Listpicker Palabras && Listview
     isVisible = false;
-    public pinSelected: Pin = new Pin();
+    // Palabras
+    isVisiblePalabras = false;
+    // Pines
+    isVisiblePines = true;
+    pinSelected: Pin = new Pin();
+    palabraUnoSelected: Palabra = new Palabra();
+    palabraDosSelected: Palabra = new Palabra();
+    palabraTresSelected: Palabra = new Palabra();
+
+
 
 
     constructor(private routerExtensions: RouterExtensions, private palabraService: PalabraService,
@@ -64,7 +73,7 @@ export class SearchComponent implements OnInit {
 
     alertMessage(message: string) {
         return alert({
-            title: "PIN",
+            title: "Aviso!",
             okButtonText: "OK",
             message: message
         });
@@ -90,11 +99,82 @@ export class SearchComponent implements OnInit {
 
             } else if (r == "Editar palabras") {
                 this.isVisible = true;
+                this.isVisiblePines = false;
 
                 this.gpioService.consultarPinById(id).
                     subscribe((result: any) => {
                         this.pinSelected = result;
-                        console.log(this.pinSelected);
+
+                        // Consultar la descripcion de la palabraUno del pin seleccionado
+                        if (result.pin.palabraUno != null) {
+                            this.palabraService.consultarPalabraById(result.pin.palabraUno).
+                                subscribe((resultPalabraUno: any) => {
+                                    this.palabraUnoSelected = resultPalabraUno;
+                                }, (error) => {
+                                    this.alertMessage(error.message);
+                                    this.palabraUnoSelected = null;
+                                }
+                                );
+                        }
+
+                        // Consultar la descripcion de la palabraDos del pin seleccionado
+                        if (result.pin.palabraDos != null) {
+                            this.palabraService.consultarPalabraById(result.pin.palabraDos).
+                                subscribe((resultPalabraDos: any) => {
+                                    this.palabraDosSelected = resultPalabraDos;
+                                }, (error) => {
+                                    this.alertMessage(error.message);
+                                    this.palabraDosSelected = null;
+                                }
+                                );
+                        }
+
+                        // Consultar la descripcion de la palabraTres del pin seleccionado
+                        if (result.pin.palabraTres != null) {
+                            this.palabraService.consultarPalabraById(result.pin.palabraTres).
+                                subscribe((resultPalabraTres: any) => {
+                                    this.palabraTresSelected = resultPalabraTres;
+                                }, (error) => {
+                                    this.alertMessage(error.message);
+                                    this.palabraTresSelected = null;
+                                }
+                                );
+
+                        }
+
+
+                    }, (error) => {
+                        this.alertMessage(error.message);
+                    }
+                    );
+
+            }
+        });
+
+    }
+
+    alertActionPalabras(id: string) {
+        return action({
+            title: "¿Desea editar el pin?",
+            cancelButtonText: "Cancelar",
+            actions: ["Editar palabra", "Eliminar palabra"]
+        }).then(r => {
+
+            if (r == "Editar palabra") {
+
+                this.palabraService.consultarPalabraById(id).
+                    subscribe((result: any) => {
+                        this.editarPalabras(result);
+
+                    }, (error) => {
+                        this.alertMessage(error.message);
+                    }
+                    );
+
+            } else if (r == "Eliminar palabra") {
+                this.palabraService.eliminarPalabra(id).
+                    subscribe((result: any) => {
+                        this.alertMessage(result.message);
 
                     }, (error) => {
                         this.alertMessage(error.message);
@@ -146,8 +226,95 @@ export class SearchComponent implements OnInit {
         });
     }
 
+    editarPalabras(resultPalabraById: any) {
+        dialogs.prompt({
+            title: "Editar palabra",
+            message: "Ingrese nueva palabra",
+            okButtonText: "OK",
+            cancelButtonText: "Cancelar",
+            inputType: dialogs.inputType.text
+        }).then(r => {
+            // console.log("Dialog result: " + r.result + ", text: " + r.text); 
+            // console.log("Pin: " + resultPinById.pin.descripcion + ", text: " + r.text); 
+
+            if (r.result == true) {
+
+                console.log(resultPalabraById);
+
+                //Subscribir promesa
+                this.palabraService.editarPalabra({
+                    estado: resultPalabraById.palabra.estado,
+                    palabra: r.text
+
+                }, resultPalabraById.palabra._id
+                ).subscribe((result: any) => {
+                    this.alertMessage("Se ha modificado la palabra");
+                }, (error) => {
+                    if (error.status == 500) {
+                        this.alertMessage("La palabra: '" + r.text + "' ya existe.");
+                    } else {
+                        this.alertMessage(error.message);
+                    }
+                }
+                );
+            }
+        });
+    }
+
+    palabraNueva() {
+        dialogs.prompt({
+            title: "Crear nueva palabra",
+            message: "Ingrese la palabra que desea crear.",
+            okButtonText: "OK",
+            cancelButtonText: "Cancelar",
+            inputType: dialogs.inputType.text
+        }).then(r => {
+            // console.log("Dialog result: " + r.result + ", text: " + r.text); 
+            // console.log("Pin: " + resultPinById.pin.descripcion + ", text: " + r.text); 
+
+            //Subscribir promesa
+            this.palabraService.agregarPalabra({
+                palabra: r.text,
+                estado: true
+            }
+            ).subscribe((result: any) => {
+                this.alertMessage("Se ha creado la palabra: '" + r.text + "'");
+            }, (error) => {
+                //Si se presiona "cancelar"
+                if (r.result == false) {
+                    //no hacer nada
+                } else {
+                    if (error.status == 500) {
+                        this.alertMessage("La palabra: '" + r.text + "' ya existe.");
+                    } else {
+                        this.alertMessage(error.message);
+                    }
+                }
+            }
+            );
+        });
+    }
+
     cancelarEditarPalabra() {
         this.isVisible = false;
+        this.isVisiblePines = true;
     }
+
+    cancelarCrearPalabra() {
+        this.isVisiblePines = true;
+        this.isVisiblePalabras = false;
+    }
+
+    public crearPalabras() {
+        this.isVisiblePines = false;
+        this.isVisiblePalabras = true;
+        this.isVisible = false;
+    }
+
+    public volverCrearPalabras() {
+        this.isVisiblePines = true;
+        this.isVisiblePalabras = false;
+    }
+
 
 }
