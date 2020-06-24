@@ -31,6 +31,10 @@ export class BrowseComponent implements OnInit {
             onResult: (transcription: SpeechRecognitionTranscription) => {
                 console.log(`Text: ${transcription.text}, Finished: ${transcription.finished}`);
                 this.transcription = transcription.text;
+
+                
+
+
                 this.change.detectChanges();
             }
         }

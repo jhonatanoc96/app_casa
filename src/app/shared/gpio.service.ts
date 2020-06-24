@@ -20,6 +20,16 @@ export class GpioService {
             this.serverUrl + "pin/" + pin + "/", data, { headers: headers });
     }
 
+    // Función para consultar el estado del bombillo
+    consultarEstado(pin: string) {
+        let headers = new HttpHeaders({
+            "Content-Type": "application/json"
+        });
+
+        return this.http.get(
+            this.serverUrl + "pin/" + pin + "/", { headers: headers });
+    }
+
     // Función para consultar los pines creados
     consultarPines() {
         let headers = new HttpHeaders({

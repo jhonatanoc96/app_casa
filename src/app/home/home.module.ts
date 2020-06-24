@@ -3,6 +3,7 @@ import { NativeScriptCommonModule } from "nativescript-angular/common";
 
 import { HomeRoutingModule } from "./home-routing.module";
 import { HomeComponent } from "./home.component";
+import { SpeechRecognition } from "nativescript-speech-recognition";
 
 @NgModule({
     imports: [
@@ -14,6 +15,10 @@ import { HomeComponent } from "./home.component";
     ],
     schemas: [
         NO_ERRORS_SCHEMA
+    ],
+    providers: [
+        SpeechRecognition
     ]
+
 })
 export class HomeModule { }

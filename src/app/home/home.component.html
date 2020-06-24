@@ -4,6 +4,11 @@
 
 <StackLayout>
 
+	<Label text="Ventilador..." textWrap="true"></Label>
+	<Switch class="switch" color="blue" (checkedChange)="onCheckedChangeVentilador($event)" backgroundColor="black"
+		offBackgroundColor="gray">
+	</Switch>
+
 	<Label text="Jhonatan..." textWrap="true"></Label>
 	<Switch class="switch" color="blue" (checkedChange)="onCheckedChangeJhonatan($event)" backgroundColor="black"
 		offBackgroundColor="gray">
@@ -18,5 +23,11 @@
 	<Switch class="switch" color="blue" (checkedChange)="onCheckedChangeSala($event)" backgroundColor="black"
 		offBackgroundColor="gray">
 	</Switch>
+
+	<Button *ngIf="isRecording" text="&#xf130;" class="nt-icon fas fab-button" (tap)="triggerListening()"
+		rippleColor="#f1f1f1"></Button>
+	
+		<Button *ngIf="!isRecording" text="&#xf04d;" class="nt-icon fas fab-button" (tap)="stopListening()"
+		rippleColor="#f1f1f1"></Button>
 
 </StackLayout>

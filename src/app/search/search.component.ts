@@ -29,15 +29,17 @@ export class SearchComponent implements OnInit {
     isVisible = false;
     // Palabras
     isVisiblePalabras = false;
+    isVisibleEditarPalabras = false;
+    idPalabraSelected: string;
     // Pines
     isVisiblePines = true;
     pinSelected: Pin = new Pin();
-    palabraUnoSelected: Palabra = new Palabra();
-    palabraDosSelected: Palabra = new Palabra();
-    palabraTresSelected: Palabra = new Palabra();
-
-
-
+    // Titulo para menu de editar palabras
+    defaultTitle: string = "Seleccione cuál palabra desea editar."
+    // Ocultar botones para editar palabras
+    isVisibleEditarPalabra1 = true;
+    isVisibleEditarPalabra2 = true;
+    isVisibleEditarPalabra3 = true;
 
     constructor(private routerExtensions: RouterExtensions, private palabraService: PalabraService,
         private gpioService: GpioService) {
@@ -48,7 +50,6 @@ export class SearchComponent implements OnInit {
         // Inicializar las palabras para mostrarlas en la vista
         this.palabraService.consultarPalabras().subscribe((result: any) => {
             this.listaPalabras = result.palabras;
-            // console.log(this.listaPalabras);
         }, (error) => {
             this.alertMessage(error.message);
         }
@@ -64,11 +65,22 @@ export class SearchComponent implements OnInit {
 
         );
 
+        // Inicializar pinSelected con cualquier valor para que no salga error
+        this.gpioService.consultarPinById("5ed22ba4b7183e3eb827f4f0").subscribe((result: any) => {
+            this.pinSelected = result;
+        }, (error) => {
+            this.alertMessage(error.message);
+        }
+
+        );
+
     }
 
     public onSelectedIndexChanged(args: EventData) {
         const picker = <ListPicker>args.object;
-        console.log(`index: ${picker.selectedIndex}; item" ${this.listaPalabras[picker.selectedIndex].palabra}`);
+        this.idPalabraSelected = (`${this.listaPalabras[picker.selectedIndex]._id}`);
+        // console.log(`index: ${picker.selectedIndex}; item" ${this.listaPalabras[picker.selectedIndex].palabra}`);
+        // console.log(this.idPalabraSelected);
     }
 
     alertMessage(message: string) {
@@ -104,44 +116,6 @@ export class SearchComponent implements OnInit {
                 this.gpioService.consultarPinById(id).
                     subscribe((result: any) => {
                         this.pinSelected = result;
-
-                        // Consultar la descripcion de la palabraUno del pin seleccionado
-                        if (result.pin.palabraUno != null) {
-                            this.palabraService.consultarPalabraById(result.pin.palabraUno).
-                                subscribe((resultPalabraUno: any) => {
-                                    this.palabraUnoSelected = resultPalabraUno;
-                                }, (error) => {
-                                    this.alertMessage(error.message);
-                                    this.palabraUnoSelected = null;
-                                }
-                                );
-                        }
-
-                        // Consultar la descripcion de la palabraDos del pin seleccionado
-                        if (result.pin.palabraDos != null) {
-                            this.palabraService.consultarPalabraById(result.pin.palabraDos).
-                                subscribe((resultPalabraDos: any) => {
-                                    this.palabraDosSelected = resultPalabraDos;
-                                }, (error) => {
-                                    this.alertMessage(error.message);
-                                    this.palabraDosSelected = null;
-                                }
-                                );
-                        }
-
-                        // Consultar la descripcion de la palabraTres del pin seleccionado
-                        if (result.pin.palabraTres != null) {
-                            this.palabraService.consultarPalabraById(result.pin.palabraTres).
-                                subscribe((resultPalabraTres: any) => {
-                                    this.palabraTresSelected = resultPalabraTres;
-                                }, (error) => {
-                                    this.alertMessage(error.message);
-                                    this.palabraTresSelected = null;
-                                }
-                                );
-
-                        }
-
 
                     }, (error) => {
                         this.alertMessage(error.message);
@@ -298,17 +272,29 @@ export class SearchComponent implements OnInit {
     cancelarEditarPalabra() {
         this.isVisible = false;
         this.isVisiblePines = true;
+        this.isVisibleEditarPalabras = false;
+        this.isVisibleEditarPalabra1 = true;
+        this.isVisibleEditarPalabra2 = true;
+        this.isVisibleEditarPalabra3 = true;
     }
 
     cancelarCrearPalabra() {
         this.isVisiblePines = true;
         this.isVisiblePalabras = false;
+        this.isVisibleEditarPalabra1 = true;
+        this.isVisibleEditarPalabra2 = true;
+        this.isVisibleEditarPalabra3 = true;
     }
 
     public crearPalabras() {
         this.isVisiblePines = false;
         this.isVisiblePalabras = true;
         this.isVisible = false;
+        this.isVisibleEditarPalabras = false;
+        this.defaultTitle = "Seleccione cuál palabra desea editar.";
+        this.isVisibleEditarPalabra1 = true;
+        this.isVisibleEditarPalabra2 = true;
+        this.isVisibleEditarPalabra3 = true;
     }
 
     public volverCrearPalabras() {
@@ -316,5 +302,105 @@ export class SearchComponent implements OnInit {
         this.isVisiblePalabras = false;
     }
 
+    public editarPalabra1() {
+        this.isVisibleEditarPalabras = true;
+        this.defaultTitle = "Editando palabra 1";
+        this.isVisibleEditarPalabra1 = false;
+        this.isVisibleEditarPalabra2 = false;
+        this.isVisibleEditarPalabra3 = false;
+    }
+
+    public editarPalabra2() {
+        this.isVisibleEditarPalabras = true;
+        this.defaultTitle = "Editando palabra 2";
+        this.isVisibleEditarPalabra1 = false;
+        this.isVisibleEditarPalabra2 = false;
+        this.isVisibleEditarPalabra3 = false;
+    }
+
+    public editarPalabra3() {
+        this.isVisibleEditarPalabras = true;
+        this.defaultTitle = "Editando palabra 3";
+        this.isVisibleEditarPalabra1 = false;
+        this.isVisibleEditarPalabra2 = false;
+        this.isVisibleEditarPalabra3 = false;
+    }
+
+    public volverEditarPalabras() {
+        this.defaultTitle = "Seleccione cuál palabra desea editar.";
+        this.isVisibleEditarPalabra1 = true;
+        this.isVisibleEditarPalabra2 = true;
+        this.isVisibleEditarPalabra3 = true;
+        this.isVisibleEditarPalabras = false;
+    }
+
+    public submitEditarPalabras() {
+
+        this.palabraService.consultarPalabraById(this.idPalabraSelected).
+            subscribe((result: any) => {
+                if (this.defaultTitle == "Editando palabra 1") {
+                    //Subscribir promesa
+                    this.gpioService.editarPin({
+                        numero: this.pinSelected.pin.numero,
+                        descripcion: this.pinSelected.pin.descripcion,
+                        palabraUno: result.palabra,
+                        palabraDos: this.pinSelected.pin.palabraDos,
+                        palabraTres: this.pinSelected.pin.palabraTres
+
+                    }, this.pinSelected.pin._id
+                    ).subscribe((result2: any) => {
+                        console.log(result2);
+                        this.alertMessage("Se ha modificado la palabra");
+                    }, (error) => {
+                        console.log("error" + result);
+
+                        this.alertMessage(error.message);
+                    }
+                    );
+                } else if (this.defaultTitle == "Editando palabra 2") {
+                    this.gpioService.editarPin({
+                        numero: this.pinSelected.pin.numero,
+                        descripcion: this.pinSelected.pin.descripcion,
+                        palabraUno: this.pinSelected.pin.palabraUno,
+                        palabraDos: result.palabra,
+                        palabraTres: this.pinSelected.pin.palabraTres
+
+                    }, this.pinSelected.pin._id
+                    ).subscribe((result2: any) => {
+                        console.log(result2);
+                        this.alertMessage("Se ha modificado la palabra");
+                    }, (error) => {
+                        console.log("error" + result);
+
+                        this.alertMessage(error.message);
+                    }
+                    );
+                } else if (this.defaultTitle == "Editando palabra 3") {
+                    this.gpioService.editarPin({
+                        numero: this.pinSelected.pin.numero,
+                        descripcion: this.pinSelected.pin.descripcion,
+                        palabraUno: this.pinSelected.pin.palabraUno,
+                        palabraDos: this.pinSelected.pin.palabraDos,
+                        palabraTres: result.palabra
+
+                    }, this.pinSelected.pin._id
+                    ).subscribe((result2: any) => {
+                        console.log(result2);
+                        this.alertMessage("Se ha modificado la palabra");
+                    }, (error) => {
+                        console.log("error" + result);
+
+                        this.alertMessage(error.message);
+                    }
+                    );
+                }
+
+
+            }, (error) => {
+                this.alertMessage(error.message);
+            }
+            );
+
+    }
 
 }

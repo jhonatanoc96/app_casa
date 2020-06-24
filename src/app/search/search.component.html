@@ -35,26 +35,35 @@
 <GridLayout *ngIf="isVisible">
     <StackLayout>
         <Label text="Descripción: {{pinSelected.pin.descripcion}}" textWrap="true"></Label>
-        <Label *ngIf="pinSelected.pin.palabraUno" text="{{'Palabra 1: ' + palabraUnoSelected.palabra.palabra}}"></Label>
-        <Label *ngIf="pinSelected.pin.palabraDos" text="{{'Palabra 2: ' + palabraDosSelected.palabra.palabra}}"></Label>
-        <Label *ngIf="pinSelected..palabraTres"
-            text="{{'Palabra 3: ' + palabraTresSelected.palabra.palabra}}"></Label>
+        <Label *ngIf="pinSelected.pin.palabraUno" text="{{'Palabra 1: ' + pinSelected.pin.palabraUno.palabra}}"></Label>
+        <Label *ngIf="pinSelected.pin.palabraDos" text="{{'Palabra 2: ' + pinSelected.pin.palabraDos.palabra}}"></Label>
+        <Label *ngIf="pinSelected.pin.palabraTres"
+            text="{{'Palabra 3: ' + pinSelected.pin.palabraTres.palabra}}"></Label>
         <Label text=""></Label>
-        <ListPicker [items]="listaPalabras" textField="palabra" selectedIndex="0"
+        <Label text="{{defaultTitle}}"></Label>
+        <Label text=""></Label>
+        <Button *ngIf="isVisibleEditarPalabra1" text="Editar palabra 1" (tap)="editarPalabra1()"></Button>
+        <Button *ngIf="isVisibleEditarPalabra2" text="Editar palabra 2" (tap)="editarPalabra2()"></Button>
+        <Button *ngIf="isVisibleEditarPalabra3" text="Editar palabra 3" (tap)="editarPalabra3()"></Button>
+        <ListPicker *ngIf="isVisibleEditarPalabras" [items]="listaPalabras" textField="palabra" selectedIndex="0"
             (selectedIndexChange)="onSelectedIndexChanged($event)" class="picker"></ListPicker>
-        <Button text="OK"></Button>
+        <Button *ngIf="isVisibleEditarPalabras" text="OK" (tap)="submitEditarPalabras()"></Button>
+        <Button *ngIf="isVisibleEditarPalabras" text="Atrás" (tap)="volverEditarPalabras()"></Button>
         <Button text="Cancelar" (tap)="cancelarEditarPalabra()"></Button>
     </StackLayout>
 </GridLayout>
 
 <StackLayout>
-    <Button *ngIf="!isVisiblePalabras" text="&#xf067;" class="nt-icon fas fab-button" (tap)="crearPalabras()" rippleColor="#f1f1f1"></Button>
+    <Button *ngIf="!isVisiblePalabras" text="&#xf067;" class="nt-icon fas fab-button" (tap)="crearPalabras()"
+        rippleColor="#f1f1f1"></Button>
 </StackLayout>
 
 <StackLayout>
-    <Button *ngIf="isVisiblePalabras" (tap)="palabraNueva()" rippleColor="#f1f1f1" text="&#xf067;" class="nt-icon fas fab-button-create"></Button>
+    <Button *ngIf="isVisiblePalabras" (tap)="palabraNueva()" rippleColor="#f1f1f1" text="&#xf067;"
+        class="nt-icon fas fab-button-create"></Button>
 </StackLayout>
 
 <StackLayout>
-    <Button *ngIf="isVisiblePalabras" (tap)="volverCrearPalabras()" rippleColor="#f1f1f1" text="&#xf060;" class="nt-icon fas fab-button"></Button>
+    <Button *ngIf="isVisiblePalabras" (tap)="volverCrearPalabras()" rippleColor="#f1f1f1" text="&#xf060;"
+        class="nt-icon fas fab-button"></Button>
 </StackLayout>
