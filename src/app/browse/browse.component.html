@@ -1,9 +1,15 @@
-<ActionBar>
-    <Label text="Browse"></Label>
-</ActionBar>
-
-<StackLayout>
-    <Label [text]="transcription"></Label>
-    <Button (tap)="triggerListening()" text="Start Listening"></Button>
-    <Button (tap)="stopListening()" text="Stop Listening"></Button>
-</StackLayout>
+<page (loaded)="onPageLoad($event)" xmlns="http://schemas.nativescript.org/tns.xsd">
+    <stack-layout>
+      <button (tap)="addItem()" text="Add Item" horizontal-alignment="center"></button>
+      <repeater id="repeatedItemsList" items="{{ items }}">
+        <repeater.itemTemplate>
+          <grid-layout columns="*,auto" rows="auto,auto" style="margin-top: 5;">
+            <label col="0" text="{{ $value }}"></label>
+            <button col="1" style="margin-left: 5; margin-right: 5;" text="Delete" (tap)="removeItem()"></button>
+            <!-- item separator -->
+            <stack-layout colSpan="3" row="1" style="background-color: lightgray; height: 1;"></stack-layout>
+          </grid-layout>
+        </repeater.itemTemplate>
+      </repeater>
+    </stack-layout>
+  </page>

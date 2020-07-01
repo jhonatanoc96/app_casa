@@ -1,5 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
-import { SpeechRecognition, SpeechRecognitionTranscription, SpeechRecognitionOptions } from 'nativescript-speech-recognition';
+import { Component, OnInit } from "@angular/core";
+import { Page } from "tns-core-modules/ui/page";
+import { EventData } from "tns-core-modules/data/observable";
+import { ObservableArray } from "tns-core-modules/data/observable-array";
+import { View } from 'tns-core-modules/ui/core/view';
+import { StackLayout } from "tns-core-modules/ui/layouts/stack-layout";
+import { Repeater } from "tns-core-modules/ui/repeater";
+
 
 @Component({
     selector: "Browse",
@@ -7,46 +13,60 @@ import { SpeechRecognition, SpeechRecognitionTranscription, SpeechRecognitionOpt
 })
 export class BrowseComponent implements OnInit {
 
-    transcription: string;
+    // items: ObservableArray<any>;
+    thisPage: Page;
+    counter: number = 0;
 
-    constructor(private speechRecognition: SpeechRecognition, private change: ChangeDetectorRef) {
+    constructor() {
         // this.triggerListening();
     }
 
     ngOnInit(): void {
         // Use the "ngOnInit" handler to initialize data for the view.
+        // this.items = new ObservableArray([]);
     }
 
-    triggerListening() {
-        this.speechRecognition.available().then(available => {
-            // console.log(available) 
-            available ? this.listen() : alert('Speech recognition is not available!');
-        })
-            .catch(error => console.error(error));
+
+    onPageLoad(args: EventData) {
+        this.thisPage = <Page>args.object;
+        this.thisPage.bindingContext = { items: new ObservableArray([]) };
     }
 
-    listen() {
-        const options: SpeechRecognitionOptions = {
-            locale: 'es-ES',
-            onResult: (transcription: SpeechRecognitionTranscription) => {
-                console.log(`Text: ${transcription.text}, Finished: ${transcription.finished}`);
-                this.transcription = transcription.text;
+    addItem() {
+        // this.items.push(this.counter.toString());
+        // this.counter++;
 
-                
+        this.thisPage.bindingContext.items.push(this.counter.toString());
+        this.counter++;
+        // get a handle to the newly added View, remember it's added to the StackLayout
+        let lastItemIndex = this.thisPage.bindingContext.items.length - 1,
+            //get a handle to the repeater
+            repeater: Repeater = <Repeater>this.thisPage.getViewById('repeatedItemsList'),
+            //get the child (a StackLayout by default)
+            repeaterStackLayout: StackLayout = <StackLayout>repeater.itemsLayout,
+            //get the view at the index of our new item
+            newChildView: View = repeaterStackLayout.getChildAt(lastItemIndex);
 
+         console.log(repeater.itemsLayout.getChildrenCount);
 
-                this.change.detectChanges();
-            }
-        }
-
-        this.speechRecognition.startListening(options)
-            .then(() => console.log("Started listening"))
-            .catch(error => console.error(error));
+        // if (newChildView) {
+        //     console.log("prueba2");
+        //     //set the scale of X and Y to zero (zoomed out)
+        //     newChildView.scaleX = 0;
+        //     newChildView.scaleY = 0;
+        //     //animate the scales back to one over time to make a zoom in effect
+        //     newChildView.animate({
+        //         scale: { x: 1, y: 1 },
+        //         duration: 300
+        //     });
+        // }
     }
 
-    stopListening() {
-        this.speechRecognition.stopListening()
-            .then(() => console.log("Stopped listening."))
-            .catch(error => console.error(error));
+    removeItem(arg: EventData) {
+        let index = this.thisPage.bindingContext.items.indexOf((<View>arg.object).bindingContext);
+        (<View>arg.object).animate({
+            translate: { x: -500, y: 0 },
+            duration: 300
+        }).then(() => this.thisPage.bindingContext.items.splice(index, 1));
     }
 }

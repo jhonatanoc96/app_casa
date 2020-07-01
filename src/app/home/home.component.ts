@@ -139,9 +139,9 @@ export class HomeComponent implements OnInit {
                 // });
                 let i = 0;
                 for (i = 0; i < this.listaPines.length; i++) {
-                    if (this.transcription === this.listaPines[i].palabraUno.palabra
-                        || this.transcription === this.listaPines[i].palabraDos.palabra
-                        || this.transcription === this.listaPines[i].palabraTres.palabra) {
+                    if (this.transcription.toLocaleUpperCase() === this.listaPines[i].palabraUno.palabra.toLocaleUpperCase()
+                        || this.transcription.toLocaleUpperCase() === this.listaPines[i].palabraDos.palabra.toLocaleUpperCase()
+                        || this.transcription.toLocaleUpperCase() === this.listaPines[i].palabraTres.palabra.toLocaleUpperCase()) {
 
                         switch (this.listaPines[i].numero) {
                             case 3: //Ventilador
