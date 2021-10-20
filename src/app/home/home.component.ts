@@ -99,10 +99,8 @@ export class HomeComponent implements OnInit {
                 state: accion
             }, color
         ).subscribe((result: any) => {
-            console.log(result);
 
         }, (error) => {
-            console.log("error");
             this.alert("error", error.message);
         }
 
@@ -119,8 +117,7 @@ export class HomeComponent implements OnInit {
     }
 
     triggerListening() {
-        this.speechRecognition.available().then(available => {
-            // console.log(available) 
+        this.speechRecognition.available().then(available => { 
             available ? this.listen() : alert('Speech recognition is not available!');
         })
             .catch(error => console.error(error));
@@ -131,7 +128,6 @@ export class HomeComponent implements OnInit {
         const options: SpeechRecognitionOptions = {
             locale: 'es-ES',
             onResult: (transcription: SpeechRecognitionTranscription) => {
-                console.log(`Text: ${transcription.text}, Finished: ${transcription.finished}`);
                 this.transcription = transcription.text;
 
 
@@ -146,7 +142,6 @@ export class HomeComponent implements OnInit {
                         switch (this.listaPines[i].numero) {
                             case 3: //Ventilador
                                 this.gpioService.consultarEstado("ventilador").subscribe((result: any) => {
-                                    console.log(result.ventilador);
                                     if (result.ventilador == 1) {
                                         this.cambiarEstado("ventilador", 0);
                                     } else {
@@ -161,7 +156,6 @@ export class HomeComponent implements OnInit {
                                 break;
                             case 5: //Jhonatan
                                 this.gpioService.consultarEstado("jhonatan").subscribe((result: any) => {
-                                    console.log(result.jhonatan);
                                     if (result.jhonatan == 1) {
                                         this.cambiarEstado("jhonatan", 0);
                                     } else {
@@ -175,7 +169,6 @@ export class HomeComponent implements OnInit {
                                 break;
                             case 8: //Danilo
                                 this.gpioService.consultarEstado("danilo").subscribe((result: any) => {
-                                    console.log(result.danilo);
                                     if (result.danilo == 1) {
                                         this.cambiarEstado("danilo", 0);
                                     } else {
@@ -189,7 +182,6 @@ export class HomeComponent implements OnInit {
                                 break;
                             case 10: //Sala
                                 this.gpioService.consultarEstado("sala").subscribe((result: any) => {
-                                    console.log(result.sala);
                                     if (result.sala == 1) {
                                         this.cambiarEstado("sala", 0);
                                     } else {
